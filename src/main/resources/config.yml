@@ -1,0 +1,15 @@
+config:
+  distance_from_player: 5
+  decimal_places_for_distance: 2
+
+trackers:
+  exampleTracker:
+    world: world
+    # can be worlds: world which gets every world that starts with world e.g world_nether
+    x: 0
+    y: 100
+    z: 0
+    text:
+      - "&a&lExample Project"
+      - "&fSecond line"
+      - "&fDistance: &a%movingholograms_exampleTracker%m"
