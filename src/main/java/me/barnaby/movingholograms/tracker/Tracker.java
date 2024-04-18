@@ -9,15 +9,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.barnaby.movingholograms.MovingHolograms;
 import me.barnaby.movingholograms.util.LocationUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Tracker {
 
@@ -29,7 +27,7 @@ public class Tracker {
     @Getter
     private final String id;
     private final MovingHolograms movingHolograms;
-    private final Map<Player, Hologram> canSee = new HashMap<>();
+    private final Map<UUID, Hologram> canSee = new HashMap<>();
 
     public Tracker(String id, Location holoLocation, List<String> hologramLines, MovingHolograms movingHolograms) {
         this.id = id;
@@ -38,25 +36,44 @@ public class Tracker {
         this.movingHolograms = movingHolograms;
     }
 
-    public void enableHologram(Player player) {
+    public void enableHologram(UUID player) {
         if (canSee.get(player) == null) {
-            canSee.put(player, DHAPI.createHologram(id+ "_" + player.getName(), holoLocation.clone()));
+            canSee.put(player, DHAPI.createHologram(id + "_" +
+                    Bukkit.getPlayer(player).getName(), holoLocation.clone()));
             hologramLines.forEach(line -> {
                 DHAPI.addHologramLine(canSee.get(player), line);
             });
         }
-        canSee.get(player).show(player, 0);
-    }
-    public void disableHologram(Player player) {
-        canSee.remove(player);
-        if (canSee.get(player) != null) canSee.get(player).delete();
+        Hologram hologram = canSee.get(player);
+        Bukkit.getOnlinePlayers().forEach(pl -> {
+            if (pl.getUniqueId() == player) return;
+            hologram.setHidePlayer(pl);
+        });}
 
+    public void showHologram(UUID player) {
+        if (canSee.get(player) != null) canSee.get(player).show(Bukkit.getPlayer(player), 0);
+    }
+
+    public void hideHologram(UUID player) {
+        if (canSee.get(player) != null) canSee.get(player).hide(Bukkit.getPlayer(player));
+    }
+
+
+    public void disableHologram(UUID player) {
+        if (canSee.get(player) != null) canSee.get(player).delete();
+        canSee.remove(player);
+    }
+
+    public void delete() {
+        canSee.values().forEach(Hologram::delete);
     }
 
     public void reloadHologramLocation() {
-        canSee.keySet().forEach(player -> {
+        canSee.keySet().forEach(uuid -> {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) return;
             int distance = movingHolograms.getConfigManager().getConfig().getInt("config.distance_from_player");
-            if (player.getWorld() != canSee.get(player).getLocation().getWorld()) return;
+            if (player.getWorld() != canSee.get(uuid).getLocation().getWorld()) return;
             if (player.getLocation().distance(holoLocation.clone()) < distance) {
                 DHAPI.moveHologram(id + "_" + player.getName(), holoLocation.clone().add(0, 1, 0));
                 return;

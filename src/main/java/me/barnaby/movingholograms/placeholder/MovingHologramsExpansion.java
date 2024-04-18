@@ -5,6 +5,7 @@ import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.barnaby.movingholograms.tracker.Tracker;
 import me.barnaby.movingholograms.tracker.TrackerManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,10 @@ public class MovingHologramsExpansion extends PlaceholderExpansion {
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         Tracker tracker = trackerManager.getTracker(params);
+        if (tracker == null) {
+            Bukkit.getLogger().warning("Placeholder: " + params + " is not a valid tracker!");
+            return "null";
+        }
         return String.valueOf(getFormattedDistance(player.getLocation(), tracker.getHoloLocation()));
     }
 

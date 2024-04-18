@@ -20,7 +20,9 @@ public class RogueTrackerCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (!s.equalsIgnoreCase("roguetracker")) return true;
+        if (!s.equalsIgnoreCase("roguetracker")
+                && (!s.equalsIgnoreCase("movingholograms"))
+        && (!s.equalsIgnoreCase("tracker"))) return true;
 
         if (strings.length<3 || !commandSender.hasPermission("*")) {
             sendHelp(commandSender);
@@ -42,9 +44,9 @@ public class RogueTrackerCommand implements CommandExecutor {
 
 
             if (strings[2].equalsIgnoreCase("on"))
-                tracker.enableHologram(player);
+                tracker.enableHologram(player.getUniqueId());
             else
-                tracker.disableHologram(player);
+                tracker.disableHologram(player.getUniqueId());
             commandSender.sendMessage(ChatColor.GREEN + "Success!");
         }
         else sendHelp(commandSender);
@@ -53,9 +55,11 @@ public class RogueTrackerCommand implements CommandExecutor {
     }
 
     private void sendHelp(CommandSender commandSender) {
-        commandSender.sendMessage(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "Trackers - Made by Barnaby (barneyh)");
+        commandSender.sendMessage("");
+        commandSender.sendMessage(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "MovingHolograms - Made by Barnaby (barneyh)");
         commandSender.sendMessage(ChatColor.WHITE + "Commands:");
-        commandSender.sendMessage(ChatColor.WHITE + "/tracker <tracker> enable <player>");
-        commandSender.sendMessage(ChatColor.WHITE + "/tracker <tracker> disable <player>");
+        commandSender.sendMessage(ChatColor.WHITE + "/tracker <tracker> <player> on");
+        commandSender.sendMessage(ChatColor.WHITE + "/tracker <tracker> <player> off");
+        commandSender.sendMessage("");
     }
 }

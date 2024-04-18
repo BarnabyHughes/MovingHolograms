@@ -31,7 +31,10 @@ public class MovingHolograms extends JavaPlugin {
         }
     }
 
-
+    @Override
+    public void onDisable() {
+        trackerManager.unloadTrackers();
+    }
 
     private void registerListeners() {
         PluginManager pm = Bukkit.getPluginManager();
@@ -40,7 +43,7 @@ public class MovingHolograms extends JavaPlugin {
     }
 
     private void registerCommands() {
-        this.getCommand("roguetracker").setExecutor(new RogueTrackerCommand(trackerManager));
+        this.getCommand("movingholograms").setExecutor(new RogueTrackerCommand(trackerManager));
 
 
     }

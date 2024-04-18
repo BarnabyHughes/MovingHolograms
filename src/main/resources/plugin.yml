@@ -6,4 +6,5 @@ version: 1.0.0
 depend:
   - DecentHolograms
 commands:
-  roguetracker:
+  movingholograms:
+    aliases: [roguetracker, tracker]

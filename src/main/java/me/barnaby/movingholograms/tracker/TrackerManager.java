@@ -34,20 +34,22 @@ public class TrackerManager {
             for (String trackerKey : trackersSection.getKeys(false)) {
 
                 List<World> worlds = new ArrayList<>();
+
                 if (trackersSection.getConfigurationSection(trackerKey).contains("worlds")) {
-                    System.out.println("test");
                     Bukkit.getWorlds().forEach(world -> {
                         if (world.getName().startsWith(trackersSection.getString(trackerKey + ".worlds")))
                             worlds.add(world);
                     });
                 }
+
                 else {
-                    System.out.println("hmm");
-                    worlds.add(Bukkit.getWorld(trackersSection.getString(trackerKey + ".world")));
+                    World world = Bukkit.getWorld(trackersSection.getString(trackerKey + ".world"));
+                    if (world == null) Bukkit.getLogger().warning("World " + trackersSection.getString(trackerKey + ".world") + " not found!");
+                    else worlds.add(Bukkit.getWorld(trackersSection.getString(trackerKey + ".world")));
                 }
 
                 worlds.forEach(world -> {
-                    System.out.println(world.getName());
+                    Bukkit.getLogger().info("Tracker successfully loaded in: " + world.getName());
                     double x = trackersSection.getDouble(trackerKey + ".x");
                     double y = trackersSection.getDouble(trackerKey + ".y");
                     double z = trackersSection.getDouble(trackerKey + ".z");
@@ -62,5 +64,9 @@ public class TrackerManager {
 
             }
         }
+    }
+
+    public void unloadTrackers() {
+        trackers.forEach(Tracker::delete);
     }
 }
